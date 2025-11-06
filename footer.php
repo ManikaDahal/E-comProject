@@ -109,9 +109,9 @@
             <a href="https://twitter.com/your_twitter_handle" target="_blank"><i class="fab fa-twitter" id="twiter"></i></a>
         </div>
         <div class="footer-info">
-            <p>Address: 123 Naya basti, Banepa, Nepal</p>
-            <p>Email: <a href="mailto:sushmitatimalsina602@gmail.com">sushmitatimalsina602@gmail.com</a></p>
-            <p>Phone: +9779823003466</p>
+            <p>Address:  Naya basti, Banepa, Nepal</p>
+            <p>Email: <a href="mailto:kissanConnect01@gmail.com">kissanConnect01@gmail.com</a></p>
+            <p>Phone: +9779823000006</p>
         </div>
     </div>
     <div class="copyright">

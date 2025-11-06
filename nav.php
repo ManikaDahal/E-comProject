@@ -1,13 +1,13 @@
 <?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
-        }
+}
 // Check if the user is already logged in and retrieve the username
 $userButton = '';
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     // User is logged in, so display the username and logout button
     $username = $_SESSION['username'];
-    $userButton = "<a href='#'style='color: white;'>$username</a>";
+    $userButton = "<a href='#' style='color: white;'>$username</a>";
     $loginButton = "<form action='logout.php' method='post'>
                         <button type='submit'>Logout</button>
                     </form>";
@@ -25,7 +25,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sasto Saman - Home</title>
+    <title>KisanConnect - Home</title>
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="icon" href="images/Logo.png" type="image/x-icon">
@@ -50,7 +50,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         }
 
         .logo span {
-            color: #ea1538;
+            color: #00c853;
         }
 
         nav {
@@ -83,7 +83,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         }
 
         nav ul li a:hover {
-            color: #ea1538;
+            color: #00c853;
         }
 
         .search-container {
@@ -101,7 +101,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 
         .search-container button {
             padding: 8px;
-            background-color: #ea1538;
+            background-color: #00c853;
             border: none;
             cursor: pointer;
             color: #fff;
@@ -127,12 +127,12 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         }
 
         .nav-item a:hover {
-            color: #ea1538;
+            color: #00c853;
         }
 
         .login-section button {
             cursor: pointer;
-            background: blue;
+            background: #00c853;
             padding: 10px 20px;
             font-size: 16px;
             text-align: center;
@@ -145,7 +145,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         }
 
         .login-section button:hover {
-            background: #007bff;
+            background: #00c853;
         }
 
         .product-container {
@@ -221,15 +221,15 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 
 <body>
     <div class="header">
-        <nav >
-            <h2 class="logo">sastosaman <span>Stores</span></h2>
+        <nav>
+            <h2 class="logo">Kisan<span>Connect</span></h2>
             <ul>
                 <li><a href="index.php">Home</a></li>
-                <li><a href="whyus.php">Why us</a></li>
-                <li><a href="contactus.php">Contact us</a></li>
-                <li><a href="aboutus.php">About us</a></li>
+                <li><a href="whyus.php">Why Us</a></li>
+                <li><a href="contactus.php">Contact Us</a></li>
+                <li><a href="aboutus.php">About Us</a></li>
             </ul>
-             <div class="search-container">
+            <div class="search-container">
                 <form id="searchForm" action="search.php" method="GET">
                     <input type="text" placeholder="Search.." name="query" id="searchInput">
                     <button type="button" id="searchButton"><i class="fa fa-search" aria-hidden="true"></i></button>
@@ -250,16 +250,11 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         </nav>
     </div>
     <script>
-        // Get the search button
+        // Search button functionality
         var searchButton = document.getElementById("searchButton");
-
-        // Add click event listener to the search button
         searchButton.addEventListener("click", function() {
-            // Submit the search form
             document.getElementById("searchForm").submit();
         });
     </script>
 </body>
-
 </html>
-
