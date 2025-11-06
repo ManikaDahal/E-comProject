@@ -1,155 +1,163 @@
 <?php
 session_start();
 
-// Redirect if already logged in
-if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
-    header("Location: index.php");
-    exit();
-}
+$host = "localhost";
+$username = "root";
+$password = "";
+$database = "csit6th";
 
-// Initialize error message
-$error = '';
+$conn = mysqli_connect($host, $username, $password, $database);
+if (!$conn) die("Connection failed: " . mysqli_connect_error());
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $conn = mysqli_connect("localhost", "root", "", "csit6th");
+$error = "";
 
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
+// Handle login form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = isset($_POST['email']) ? trim($_POST['email']) : "";
+    $pass = isset($_POST['password']) ? trim($_POST['password']) : "";
 
-    // Make sure the inputs exist before using them
-    $email = isset($_POST['email']) ? mysqli_real_escape_string($conn, $_POST['email']) : '';
-    $password = isset($_POST['password']) ? mysqli_real_escape_string($conn, $_POST['password']) : '';
-
-    if ($email != '' && $password != '') {
-        $query = "SELECT * FROM signup WHERE Emailid = '$email' AND Password = '$password'";
+    if ($email === "" || $pass === "") {
+        $error = "Please enter both email and password!";
+    } else {
+        $query = "SELECT * FROM signup WHERE Emailid='$email' AND Password='$pass'";
         $result = mysqli_query($conn, $query);
 
         if ($result && mysqli_num_rows($result) > 0) {
             $row = mysqli_fetch_assoc($result);
-
             $_SESSION['loggedin'] = true;
             $_SESSION['username'] = $row['Fullname'];
-            $_SESSION['email'] = $row['Emailid'];
-
-            // Redirect without alert
-            header("Location: index.php");
+            echo "<script>
+                    alert('Login successful! Welcome {$row['Fullname']}');
+                    window.location.href='index.php';
+                  </script>";
             exit();
         } else {
-            $error = "Incorrect email or password. Please try again.";
+            $error = "Incorrect email or password!";
         }
-    } else {
-        $error = "Please fill in both fields.";
     }
-
-    mysqli_close($conn);
 }
+
+mysqli_close($conn);
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - KisanConnect</title>
-<link rel="icon" href="images/Logo.png" type="image/x-icon">
+<title>KisanConnect - Login</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <style>
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
-    background-image: url('sign.jpg');
-    background-size: cover;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-}
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
 
-.login-page {
-    background: rgba(255,255,255,0.95);
-    padding: 30px;
-    border-radius: 12px;
-    max-width: 350px;
-    width: 90%;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
+    .login-page {
+        background: #ffffffcc;
+        backdrop-filter: blur(10px);
+        padding: 40px 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        animation: fadeIn 1s ease;
+    }
 
-.login-page h1 {
-    text-align: center;
-    color: #1a4e6e;
-    margin-bottom: 10px;
-}
+    .login-page h1 {
+        color: #2e7d32;
+        margin-bottom: 20px;
+        font-size: 2rem;
+    }
 
-form {
-    display: flex;
-    flex-direction: column;
-}
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
 
-form input {
-    height: 45px;
-    margin-bottom: 15px;
-    padding: 0 14px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-}
+    form input {
+        padding: 12px 15px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 1rem;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        transition: border 0.3s ease, box-shadow 0.3s ease;
+    }
 
-.login-button {
-    background: #2196f3;
-    color: white;
-    padding: 12px 0;
-    font-weight: 600;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-}
+    form input:focus {
+        border-color: #43a047;
+        box-shadow: 0 0 8px rgba(67, 160, 71, 0.3);
+        outline: none;
+    }
 
-.login-button:hover {
-    background: #1976d2;
-}
+    button {
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #43a047, #66bb6a);
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
 
-.signup-link {
-    text-align: center;
-    margin-top: 15px;
-    font-size: 0.9rem;
-}
+    button:hover {
+        background: linear-gradient(90deg, #2e7d32, #43a047);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
 
-.signup-link a {
-    color: #2196f3;
-    text-decoration: none;
-}
+    .signup-link {
+        margin-top: 15px;
+        font-size: 0.9rem;
+        color: #555;
+    }
 
-.signup-link a:hover {
-    text-decoration: underline;
-}
+    .signup-link a {
+        color: #43a047;
+        font-weight: 600;
+        text-decoration: none;
+    }
 
-.error-message {
-    color: red;
-    text-align: center;
-    margin-bottom: 10px;
-}
+    .signup-link a:hover {
+        text-decoration: underline;
+    }
+
+    .error-message {
+        color: red;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 </style>
 </head>
 <body>
-
+<section>
 <div class="login-page">
     <h1>KisanConnect Login</h1>
-
-    <!-- Display error message -->
-    <?php if(!empty($error)) { ?>
-        <p class="error-message"><?php echo $error; ?></p>
-    <?php } ?>
-
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-        <input type="email" name="email" placeholder="Email" required>
+    <?php if(isset($error)) echo "<p class='error-message'>$error</p>"; ?>
+    <form action="" method="post">
+        <input type="text" name="email" placeholder="Email" required>
         <input type="password" name="password" placeholder="Password" required>
-        <button type="submit" class="login-button">Login</button>
+        <button type="submit"><i class="fas fa-sign-in-alt"></i> Login</button>
     </form>
-
-    <div class="signup-link">
-        <p>Don't have an account? <a href="signup.php">Sign up</a></p>
-    </div>
+    <p class="signup-link">Don't have an account? <a href="signup.php">Sign up</a></p>
 </div>
-
+</section>
 </body>
 </html>

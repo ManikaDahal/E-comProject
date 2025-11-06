@@ -1,227 +1,267 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <title>Signup Website</title>
-     
-    <style type="text/css">
-        body {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-            background-image: url('sign.jpg');
-            background-size: cover;
-            background-repeat: no-repeat;
-        }
+<?php
+session_start();
 
-        section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* viewport height */
-        }
+$host = "localhost";
+$username = "root";
+$password = "";
+$database = "csit6th";
 
-        .login {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.5);
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            position: relative;
-        }
+$conn = new mysqli($host, $username, $password, $database);
+if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 
-        .login h1 {
-            margin-bottom: 20px;
-            text-align: center;
-            color: #333;
-        }
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $fullname = trim($_POST['fullname']);
+    $email = trim($_POST['email']);
+    $pass = trim($_POST['password']);
+    $confirmpass = trim($_POST['confirmpassword']);
+    $role = trim($_POST['role']);
 
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
-            color: #333;
-        }
 
-        .input-bo {
-            margin-bottom: 15px;
-        }
-
-        .input-bo label {
-            font-size: 16px;
-            color: #333;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .input-bo input {
-            width: 90%;
-            padding: 10px;
-            border: 1px solid #aaa;
-            border-radius: 5px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-            transition: border-color 0.3s ease;
-        }
-
-        .input-bo input:focus {
-            border-color: #497ef2;
-        }
-
-        .eye-icon {
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-
-        .link button {
-            width: 100%;
-            padding: 10px;
-            background-color: #497ef2;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        .link button:hover {
-            background-color: #386fc9;
-        }
-
-        .input p {
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .input a {
-            color: #497ef2;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .input a:hover {
-            color: #386fc9;
-        }
-
-        #password-validation {
-            color: red;
-            font-size: 12px;
-            text-align: center;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-<section id="checkout-section" class="checkout-section">
-    <div class="log-cont">
-        <form action="insert.php" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" onsubmit="return validateForm()">
-            <div class="login">
-                <h1>Sign Up</h1>
-                <button class="close-button" type="button" onclick="closeCheckout()">&times;</button>
-
-                <div class="input-bo">
-                    <label for="fullname"><i class="fas fa-user"></i> Full Name</label>
-                    <input type="text" name="fullname" id="fullname" placeholder="Full Name" required>
-                </div>
-                <div class="input-bo">
-                    <label for="email"><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" name="email" id="email" placeholder="Email" required>
-                </div>
-                <div class="input-bo">
-                    <label for="password"><i class="fas fa-lock"></i> Password</label>
-                    <div style="position: relative;">
-                        <input type="password" id="password" name="password" placeholder="Password" required>
-                        <span class="eye-icon" onclick="togglePassword('password')"><i class="fas fa-eye"></i></span>
-                    </div>
-                </div>
-                <div class="input-bo">
-                    <label for="confirmPassword"><i class="fas fa-lock"></i> Confirm Password</label>
-                    <div style="position: relative;">
-                        <input type="password" id="confirmPassword" name="confirmpassword" placeholder="Confirm Password" required>
-                        <span class="eye-icon" onclick="togglePassword('confirmPassword')"><i class="fas fa-eye"></i></span>
-                    </div>
-                </div>
-                <div class="link">
-                    <button type="submit" onclick="validateForm(); savePassword();"><i class="fas fa-user-plus"></i> Sign Up</button>
-                </div>
-                <span id="password-validation"></span>
-                <div class="input">
-                    <p>Already have an account? <a href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a></p>
-                </div>
-            </div>
-        </form>
-    </div>
-</section>
-
-<script>
-    function validateForm() {
-        var password = document.getElementById("password").value;
-        var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-        if (!pattern.test(password)) {
-            document.getElementById("password-validation").innerHTML =alert( "Password must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one digit, and one special character.");
-            return false;
-        }
-
-        document.getElementById("password-validation").innerHTML = "";
-        return true;
-    }
-
-    function savePassword() {
-        var rememberMeCheckbox = document.getElementById("rememberMe");
-        var passwordInput = document.getElementById("password");
-
-        if (rememberMeCheckbox && rememberMeCheckbox.checked) {
-            localStorage.setItem("rememberedPassword", passwordInput.value);
-        } else {
-            localStorage.removeItem("rememberedPassword");
-        }
-    }
-
-    function loadSavedPassword() {
-        var rememberedPassword = localStorage.getItem("rememberedPassword");
-        var passwordInput = document.getElementById("password");
-
-        if (rememberedPassword) {
-            passwordInput.value = rememberedPassword;
-            document.getElementById("rememberMe").checked = true;
-        }
-    }
-
-    window.onload = loadSavedPassword;
-
-    function togglePassword(inputId) {
-    var input = document.getElementById(inputId);
-    var eyeIcon = input.nextElementSibling.querySelector('i');
-
-    if (input.type === 'password') {
-        input.type = 'text';
-        eyeIcon.classList.add('fa-eye');
-        eyeIcon.classList.remove('fa-eye-slash');
+    // Validate passwords
+    if ($pass !== $confirmpass) {
+        echo "<script>alert('Passwords do not match!');</script>";
     } else {
-        input.type = 'password';
-        eyeIcon.classList.add('fa-eye-slash');
-        eyeIcon.classList.remove('fa-eye');
+        // Check if email exists
+        $stmt = $conn->prepare("SELECT * FROM signup WHERE Emailid = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            echo "<script>alert('Email already registered!');</script>";
+        } else {
+            $stmt = $conn->prepare("INSERT INTO signup (Fullname, Emailid, Password , Role) VALUES (?, ?, ?,  ?)");
+            $stmt->bind_param("ssss", $fullname, $email, $pass, $role);
+            if ($stmt->execute()) {
+                echo "<script>
+                        alert('Signup successful!');
+                        window.location.href='index.php';
+                      </script>";
+            } else {
+                echo "<script>alert('Error in signup. Please try again.');</script>";
+            }
+        }
     }
 }
 
+$conn->close();
+?>
 
 
-    function closeCheckout() {
-        window.location.href = "index.php";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KisanConnect - Sign Up</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
     }
+
+    .signup-page {
+        background: #ffffffcc;
+        backdrop-filter: blur(10px);
+        padding: 40px 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        animation: fadeIn 1s ease;
+    }
+
+    .signup-page h1 {
+        color: #2e7d32;
+        margin-bottom: 20px;
+        font-size: 2rem;
+    }
+
+    .input-bo {
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    .input-bo label {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+        display: block;
+        color: #333;
+    }
+
+    .input-bo input {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 1rem;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        transition: border 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .input-bo input:focus {
+        border-color: #43a047;
+        box-shadow: 0 0 8px rgba(67, 160, 71, 0.3);
+        outline: none;
+    }
+
+    .eye-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #666;
+    }
+
+    .link button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #43a047, #66bb6a);
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .link button:hover {
+        background: linear-gradient(90deg, #2e7d32, #43a047);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .input p {
+        text-align: center;
+        font-size: 0.9rem;
+        color: #555;
+    }
+    .input-bo select {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+}
+
+.input-bo select:focus {
+    border-color: #43a047;
+    box-shadow: 0 0 8px rgba(67, 160, 71, 0.3);
+    outline: none;
+}
+
+
+    .input a {
+        color: #43a047;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .input a:hover {
+        text-decoration: underline;
+    }
+
+    .error-message {
+        color: red;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .password-container {
+        position: relative;
+    }
+</style>
+</head>
+<body>
+<section>
+<div class="signup-page">
+    <h1>KisanConnect Sign Up</h1>
+    <?php if(isset($error)) echo "<p class='error-message'>$error</p>"; ?>
+    <form action="" method="post" onsubmit="return validateForm()">
+        <div class="input-bo">
+            <label for="fullname"><i class="fas fa-user"></i> Full Name</label>
+            <input type="text" name="fullname" id="fullname" placeholder="Full Name" required>
+        </div>
+        <div class="input-bo">
+            <label for="email"><i class="fas fa-envelope"></i> Email</label>
+            <input type="email" name="email" id="email" placeholder="Email" required>
+        </div>
+        <div class="input-bo password-container">
+            <label for="password"><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <span class="eye-icon" onclick="togglePassword('password')"><i class="fas fa-eye"></i></span>
+        </div>
+        <div class="input-bo password-container">
+            <label for="confirmPassword"><i class="fas fa-lock"></i> Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmpassword" placeholder="Confirm Password" required>
+            <span class="eye-icon" onclick="togglePassword('confirmPassword')"><i class="fas fa-eye"></i></span>
+        </div>
+        <div class="input-bo">
+    <label for="role"><i class="fas fa-user-tag"></i> Role</label>
+    <select name="role" id="role" required>
+        <option value="user" selected>User</option>
+        <option value="admin">Admin</option>
+    </select>
+</div>
+
+        <div class="link">
+            <button type="submit"><i class="fas fa-user-plus"></i> Sign Up</button>
+        </div>
+        <div class="input">
+            <p>Already have an account? <a href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a></p>
+        </div>
+    </form>
+</div>
+</section>
+
+<script>
+function togglePassword(id) {
+    var input = document.getElementById(id);
+    var icon = input.nextElementSibling.querySelector('i');
+    if(input.type === "password"){ 
+        input.type="text"; 
+        icon.classList.replace('fa-eye','fa-eye-slash'); 
+    } else { 
+        input.type="password"; 
+        icon.classList.replace('fa-eye-slash','fa-eye'); 
+    }
+}
+
+function validateForm() {
+    var password = document.getElementById("password").value;
+    var pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    if(!pattern.test(password)){ 
+        alert("Password must be at least 8 characters with uppercase, lowercase, number, and special character."); 
+        return false; 
+    }
+
+    var confirmPassword = document.getElementById("confirmPassword").value;
+    if(password !== confirmPassword){
+        alert("Passwords do not match.");
+        return false;
+    }
+
+    return true;
+}
 </script>
 </body>
 </html>
+

@@ -8,7 +8,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     // User is logged in, so display the username and logout button
     $username = $_SESSION['username'];
     $userButton = "<a href='#' style='color: white;'>$username</a>";
-    $loginButton = "<form action='logout.php' method='post'>
+    $loginButton = "<form action='logout.php'onclick='return confirmLogout(); method='post'>
                         <button type='submit'>Logout</button>
                     </form>";
 } else {
@@ -255,6 +255,12 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         searchButton.addEventListener("click", function() {
             document.getElementById("searchForm").submit();
         });
+        function confirmLogout() {
+    if(confirm("Are you sure you want to logout?")) {
+        window.location.href = "logout.php";
+    }
+    return false;
+}
     </script>
 </body>
 </html>
