@@ -4,7 +4,7 @@ session_start();
 $host = "localhost";
 $username = "root";
 $password = "";
-$database = "bca4th";
+$database = "csit6th";
 
 // Establishing connection to MySQL database
 $conn = mysqli_connect($host, $username, $password, $database);

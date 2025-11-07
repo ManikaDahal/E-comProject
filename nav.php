@@ -2,23 +2,34 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
 // Check if the user is already logged in and retrieve the username
 $userButton = '';
+$loginButton = '';
+
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
-    // User is logged in, so display the username and logout button
-    $username = $_SESSION['username'];
-    $userButton = "<a href='#' style='color: white;'>$username</a>";
-    $loginButton = "<form action='logout.php'onclick='return confirmLogout(); method='post'>
-                        <button type='submit'>Logout</button>
-                    </form>";
+    $username = htmlspecialchars($_SESSION['username']); // safe output
+
+    $userButton = "
+        <div class='user-display'>
+            <i class='fas fa-user-circle'></i>
+            <span>$username</span>
+        </div>
+    ";
+
+    $loginButton = "
+        <form action='logout.php' method='post' onsubmit='return confirmLogout();'>
+            <button type='submit' class='logout-btn'>Logout</button>
+        </form>
+    ";
 } else {
-    // User is not logged in, so display the login button
-    $loginButton = "<form action='login.php' method='post'>
-                        <button type='submit'>Login</button>
-                    </form>";
+    $loginButton = "
+        <form action='login.php' method='post'>
+            <button type='submit' class='login-btn'>Login</button>
+        </form>
+    ";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -148,6 +159,51 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
             background: #00c853;
         }
 
+        /* 🟢 Elegant Username Display */
+        .user-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #00c853;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            transition: background 0.3s, transform 0.2s;
+            margin-left: 15px;
+            margin-right: 10px;
+        }
+
+        .user-display:hover {
+            background-color: #00b14f;
+            transform: translateY(-2px);
+        }
+
+        .user-display i {
+            font-size: 18px;
+        }
+
+        .logout-btn,
+        .login-btn {
+            background: transparent;
+            border: 2px solid #00c853;
+            color: #00c853;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover,
+        .login-btn:hover {
+            background-color: #00c853;
+            color: white;
+        }
+
         .product-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -234,10 +290,13 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                     <input type="text" placeholder="Search.." name="query" id="searchInput">
                     <button type="button" id="searchButton"><i class="fa fa-search" aria-hidden="true"></i></button>
                 </form>
+
+                <!-- 🟢 Username shown right after search bar -->
+                <?php echo $userButton; ?>
             </div>
+
             <div class="nav-items-right">
                 <div class="login-section">
-                    <?php echo $userButton; ?>
                     <?php echo $loginButton; ?>
                 </div>
                 <div class="nav-item">
@@ -255,12 +314,14 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         searchButton.addEventListener("click", function() {
             document.getElementById("searchForm").submit();
         });
+
         function confirmLogout() {
-    if(confirm("Are you sure you want to logout?")) {
-        window.location.href = "logout.php";
-    }
-    return false;
-}
+            if (confirm("Are you sure you want to logout?")) {
+                window.location.href = "logout.php";
+            }
+            return false;
+        }
     </script>
 </body>
+
 </html>

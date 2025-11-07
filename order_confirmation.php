@@ -4,7 +4,7 @@ session_start(); // Start the session to access session variables
 $host = "localhost";
 $username = "root";
 $password = "";
-$db = "bca4th";
+$db = "csit6th";
 $conn = mysqli_connect($host, $username, $password, $db);
 
 if (!$conn) {

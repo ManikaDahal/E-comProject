@@ -22,15 +22,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query = "SELECT * FROM signup WHERE Emailid='$email' AND Password='$pass'";
         $result = mysqli_query($conn, $query);
 
-        if ($result && mysqli_num_rows($result) > 0) {
-            $row = mysqli_fetch_assoc($result);
-            $_SESSION['loggedin'] = true;
-            $_SESSION['username'] = $row['Fullname'];
-            echo "<script>
-                    alert('Login successful! Welcome {$row['Fullname']}');
-                    window.location.href='index.php';
-                  </script>";
-            exit();
+       if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+    $_SESSION['loggedin'] = true;
+    $_SESSION['username'] = $row['Fullname'];
+    $_SESSION['Emailid'] = $row['Emailid'];
+
+    // ✅ Redirect the proper PHP way
+    header("Location: index.php?login=success");
+    exit();
+
+
         } else {
             $error = "Incorrect email or password!";
         }

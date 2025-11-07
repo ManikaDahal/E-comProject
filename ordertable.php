@@ -13,7 +13,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 $host = "localhost";
 $username = "root";
 $password = "";
-$db = "bca4th";
+$db = "csit6th";
 $conn = mysqli_connect($host, $username, $password, $db);
 
 if (!$conn) {
@@ -21,7 +21,7 @@ if (!$conn) {
 }
 
 // Fetch user data from the signup table using email stored in session
-$userEmail = $_SESSION['email']; 
+$userEmail = $_SESSION['Emailid']; 
 $sqlUser = "SELECT Fullname, Emailid FROM signup WHERE Emailid = '$userEmail'";
 $resultUser = mysqli_query($conn, $sqlUser);
 
