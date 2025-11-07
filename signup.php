@@ -214,13 +214,8 @@ $conn->close();
             <input type="password" id="confirmPassword" name="confirmpassword" placeholder="Confirm Password" required>
             <span class="eye-icon" onclick="togglePassword('confirmPassword')"><i class="fas fa-eye"></i></span>
         </div>
-        <div class="input-bo">
-    <label for="role"><i class="fas fa-user-tag"></i> Role</label>
-    <select name="role" id="role" required>
-        <option value="user" selected>User</option>
-        <option value="admin">Admin</option>
-    </select>
-</div>
+        
+    
 
         <div class="link">
             <button type="submit"><i class="fas fa-user-plus"></i> Sign Up</button>

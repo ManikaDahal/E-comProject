@@ -113,7 +113,7 @@ mysqli_close($conn);
                     <td><?php echo $order['Item_Name']; ?></td>
                     <td><?php echo $order['price']; ?></td>
                     <td><?php echo $order['quantity']; ?></td>
-                    <td><?php echo $order['order_date']; ?></td>
+                    <td><?php echo $order['order_time']; ?></td>
                     <td><?php echo $order['Customer_name']; ?></td>
                     <td><?php echo $order['Address']; ?></td>
                     <td><?php echo $order['phone_number']; ?></td>

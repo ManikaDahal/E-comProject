@@ -121,17 +121,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: #fff;
         }
         .continue {
-            background-color: #3b92d9;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-decoration: none;
-            position: absolute;
-            left: 300px;
-        }
+    background-color: #3b92d9;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    margin-right: 10px; /* small space from checkout button */
+}
+
         .continue:hover {
             background-color: #3177b0;
         }
@@ -191,16 +191,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ?>
             </tbody>
         </table>
-        <div class="checkout-section">
-            <h3>Total: Rs.<?php echo $total ?></h3>
-            <button class="checkout-button">
-                <a href="ordertable.php">Proceed to Checkout</a>
-            </button>
-            <button class="continue">
-                <a href="products.php">Continue Shopping</a>
-            </button>
-        </div>
-    </div>
+       <div class="checkout-section">
+    <h3>Total: Rs.<?php echo $total ?></h3>
+
+    <?php if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])): ?>
+        <!-- Proceed only if cart is not empty -->
+        <button class="checkout-button">
+            <a href="ordertable.php">Proceed to Checkout</a>
+        </button>
+    <?php else: ?>
+        <!-- Show message if cart is empty -->
+        <p style="color: red; font-weight: bold;">Your cart is empty. Please add items before checkout.</p>
+    <?php endif; ?>
+
+    <button class="continue">
+        <a href="products.php">Continue Shopping</a>
+    </button>
+</div>
+
     <?php include 'footer.php'; ?>
 </body>
 </html>

@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $message = "Failed to upload image.";
             }
         } else {
-            $sql = "UPDATE products SET Item_Name='$name', price='$price', category='$category' WHERE product_id='$id'";
+            $sql = "UPDATE products SET Item_Name='$name', price='$price', category='$category' WHERE id='$id'";
         }
 
         if ($conn->query($sql) === TRUE) {
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['delete_product'])) {
         $id = $_POST['id'];
-        $sql = "DELETE FROM products WHERE product_id='$id'";
+        $sql = "DELETE FROM products WHERE id='$id'";
         if ($conn->query($sql) === TRUE) {
             $message = "Product deleted successfully!";
         } else {
@@ -216,14 +216,14 @@ $conn->close();
                 </tr>
                 <?php while ($product = $products->fetch_assoc()) { ?>
                 <tr>
-                    <td><?php echo $product['product_id']; ?></td>
+                    <td><?php echo $product['id']; ?></td>
                     <td><?php echo $product['Item_Name']; ?></td>
                     <td><?php echo $product['price']; ?></td>
                     <td><?php echo $product['category']; ?></td>
                     <td><img src="uploads/<?php echo $product['product_image']; ?>" alt="<?php echo $product['Item_Name']; ?>"></td>
                     <td>
                         <form action="admin_dashboard.php" method="POST" enctype="multipart/form-data" style="display:inline;">
-                            <input type="hidden" name="id" value="<?php echo $product['product_id']; ?>">
+                            <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
                             <input type="text" name="name" value="<?php echo $product['Item_Name']; ?>" required>
                             <input type="number" name="price" value="<?php echo $product['price']; ?>" required>
                             <input type="text" name="category" value="<?php echo $product['category']; ?>" required>
@@ -231,7 +231,7 @@ $conn->close();
                             <button type="submit" name="edit_product">Update</button>
                         </form>
                         <form action="admin_dashboard.php" method="POST" style="display:inline;">
-                            <input type="hidden" name="id" value="<?php echo $product['product_id']; ?>">
+                            <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
                             <button type="submit" name="delete_product" class="delete" onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
                         </form>
                     </td>

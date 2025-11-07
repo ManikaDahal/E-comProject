@@ -18,5 +18,5 @@ if (!mysqli_query($conn, $sql)) {
 }
 
 // Select the database
-mysqli_select_db($conn, "bca4th");
+mysqli_select_db($conn, "csit6th");
 ?>

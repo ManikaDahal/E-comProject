@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Footer</title>
+    <title>Admin Footer</title>
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="icon" href="images/Logo.png" type="image/x-icon">
     <style type="text/css">
         footer {
-            width: 100%;
             background-color: #081b29;
             color: #fff;
-            padding: 40px 0;
+            padding: 20px 0;
             text-align: center;
         }
 
@@ -25,30 +24,26 @@
             margin: 0 auto;
         }
 
-        .footer-links {
-            margin-bottom: 20px;
-        }
-
         .footer-links ul {
             list-style: none;
             padding: 0;
             display: flex;
             justify-content: center;
-            margin: 0;
+            margin-bottom: 20px;
         }
 
         .footer-links ul li {
             margin: 0 15px;
         }
 
-        .footer-links ul li a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 20px;
-        }
-
         .footer-links ul li a i {
             font-size: 36px;
+            color: #ccc;
+            transition: color 0.3s;
+        }
+
+        .footer-links ul li a:hover i {
+            color: #f39c12;
         }
 
         .social-media {
@@ -58,16 +53,25 @@
         .social-media a {
             font-size: 24px;
             margin: 0 10px;
-            color: #fff;
+            text-decoration: none;
             transition: color 0.3s;
         }
 
-        .social-media a:hover {
-            color: #f39c12;
+        .social-media a#instagram:hover {
+            color: #833ab4;
+        }
+
+        .social-media a#twitter:hover {
+            color: #1da1f2;
+        }
+
+        .social-media a#facebook:hover {
+            color: #3b5998;
         }
 
         .footer-info p {
             margin: 5px 0;
+            font-size: 18px;
         }
 
         .footer-info a {
@@ -79,27 +83,6 @@
             text-decoration: underline;
         }
 
-        .footer-info p, .footer-info a {
-            font-size: 18px;
-        }
-
-        .social-media a#instagram:hover {
-            color: #833ab4; /* Instagram's brand color */
-        }
-
-        .social-media a#twitter:hover {
-            color: #1da1f2; /* Twitter's brand color */
-        }
-
-        .social-media a#facebook:hover {
-            color: #3b5998; /* Facebook's brand color */
-        }
-
-        .footer-container p {
-            margin: 10px 0;
-            font-size: 16px;
-        }
-        
         .copyright p {
             font-size: 14px;
             margin-top: 20px;
@@ -110,23 +93,32 @@
 <body>
 <footer>
     <div class="footer-container">
+        <!-- Admin navigation icons -->
         <div class="footer-links">
             <ul>
                 <li><a href="admin_home.php"><i class="fas fa-home"></i></a></li>
-                
+                <li><a href="manage_users.php"><i class="fas fa-users"></i></a></li>
+                <li><a href="reports.php"><i class="fas fa-file-alt"></i></a></li>
+                <li><a href="settings.php"><i class="fas fa-cog"></i></a></li>
             </ul>
         </div>
+
+        <!-- Social media links -->
         <div class="social-media">
             <a href="https://www.instagram.com/your_instagram_username" target="_blank" id="instagram"><i class="fab fa-instagram"></i></a>
             <a href="https://www.facebook.com/your_facebook_page" target="_blank" id="facebook"><i class="fab fa-facebook-f"></i></a>
             <a href="https://twitter.com/your_twitter_handle" target="_blank" id="twitter"><i class="fab fa-twitter"></i></a>
         </div>
+
+        <!-- Contact info -->
         <div class="footer-info">
-            <p>Address: 123 Naya basti, Banepa, Nepal</p>
-            <p>Email: <a href="mailto:sushmitatimalsina602@gmail.com">sushmitatimalsina602@gmail.com</a></p>
-            <p>Phone: +9779823003466</p>
+            <p>Address: Naya basti, Banepa, Nepal</p>
+            <p>Email: <a href="mailto:kissanConnect01@gmail.com">kissanConnect01@gmail.com</a></p>
+            <p>Phone: +9779823000006</p>
         </div>
     </div>
+
+    <!-- Copyright -->
     <div class="copyright">
         <p>&copy; 2024 aasussi.wordpress.com. All Rights Reserved.</p>
     </div>
