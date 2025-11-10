@@ -12,7 +12,7 @@ if (!$conn) {
 }
 
 // Create the database if it doesn't exist
-$sql = "CREATE DATABASE IF NOT EXISTS bca4th";
+$sql = "CREATE DATABASE IF NOT EXISTS csit6th";
 if (!mysqli_query($conn, $sql)) {
     die("Error creating database: " . mysqli_error($conn));
 }

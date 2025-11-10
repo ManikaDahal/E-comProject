@@ -4,6 +4,9 @@ session_start();
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
 
+require_once 'esewa_config.php';
+require_once 'esewa_helper.php';
+
 // Check if user is logged in
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header("Location: signup.php");
@@ -33,6 +36,14 @@ if ($resultUser && mysqli_num_rows($resultUser) > 0) {
     die("User not found!");
 }
 
+// Calculate total amount from cart
+$totalAmount = 0;
+if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $item) {
+        $totalAmount += $item['price'] * $item['Quantity'];
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['name'], $_POST['email'], $_POST['address'], $_POST['phone'])) {
         $name = mysqli_real_escape_string($conn, $_POST['name']);
@@ -41,29 +52,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $phone = mysqli_real_escape_string($conn, $_POST['phone']);
 
         if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-            $errorOccurred = false;
-            foreach ($_SESSION['cart'] as $key => $value) {
-                $itemName = mysqli_real_escape_string($conn, $value['Item_Name']);
-                $price = mysqli_real_escape_string($conn, $value['price']);
-                $quantity = mysqli_real_escape_string($conn, $value['Quantity']);
-
-                $sql = "INSERT INTO orders (Item_Name, price, quantity, Customer_name, Address, phone_number, email) VALUES ('$itemName', '$price', '$quantity', '$name', '$address', '$phone', '$email')";
-
-                if (mysqli_query($conn, $sql)) {
-                    echo "Item '$itemName' added to the orders table successfully<br>";
-                } else {
-                    echo "Error inserting item '$itemName': " . mysqli_error($conn) . "<br>";
-                    $errorOccurred = true;
-                }
-            }
-
-            if (!$errorOccurred) {
-                unset($_SESSION['cart']); // Clear the cart
-                header("Location: order_confirmation.php?email=" . urlencode($email)); // Redirect with email
-                exit();
-            } else {
-                echo "There was an error processing your order. Please try again.";
-            }
+            // Store order details in session for processing after payment
+            $_SESSION['pending_order'] = array(
+                'name' => $name,
+                'email' => $email,
+                'address' => $address,
+                'phone' => $phone,
+                'cart' => $_SESSION['cart'],
+                'total_amount' => $totalAmount
+            );
+            
+            // Generate unique transaction UUID
+            $transactionUuid = generateTransactionUuid();
+            $_SESSION['transaction_uuid'] = $transactionUuid;
+            
+            // Prepare eSewa payment parameters
+            $amount = $totalAmount;
+            $taxAmount = 0;
+            $productServiceCharge = 0;
+            $productDeliveryCharge = 0;
+            $totalAmountWithCharges = $amount + $taxAmount + $productServiceCharge + $productDeliveryCharge;
+            
+            // Generate signature
+            $signature = generateEsewaSignature($totalAmountWithCharges, $transactionUuid, ESEWA_MERCHANT_CODE);
+            
+            // Store payment details for verification
+            $_SESSION['esewa_payment'] = array(
+                'amount' => $amount,
+                'tax_amount' => $taxAmount,
+                'total_amount' => $totalAmountWithCharges,
+                'transaction_uuid' => $transactionUuid,
+                'product_code' => ESEWA_MERCHANT_CODE
+            );
+            
+            // Redirect to eSewa payment page will be handled by HTML form below
         } else {
             echo "Your cart is empty!";
         }
@@ -132,6 +154,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php include 'nav.php'; ?>
     <div class="container">
         <h1>Proceed to Checkout</h1>
+        
+        <?php if (isset($_SESSION['pending_order']) && isset($_SESSION['esewa_payment'])): ?>
+            <!-- Show eSewa Payment Form -->
+            <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+                <h2 style="color: #60bb46;">Payment Gateway</h2>
+                <p><strong>Order Summary:</strong></p>
+                <p>Total Amount: Rs. <?php echo $_SESSION['esewa_payment']['total_amount']; ?></p>
+                <p>You will be redirected to eSewa payment page to complete your payment.</p>
+                
+                <form action="<?php echo ESEWA_PAYMENT_URL; ?>" method="POST" id="esewaForm">
+                    <input type="hidden" name="amount" value="<?php echo $_SESSION['esewa_payment']['amount']; ?>">
+                    <input type="hidden" name="tax_amount" value="<?php echo $_SESSION['esewa_payment']['tax_amount']; ?>">
+                    <input type="hidden" name="total_amount" value="<?php echo $_SESSION['esewa_payment']['total_amount']; ?>">
+                    <input type="hidden" name="transaction_uuid" value="<?php echo $_SESSION['esewa_payment']['transaction_uuid']; ?>">
+                    <input type="hidden" name="product_code" value="<?php echo $_SESSION['esewa_payment']['product_code']; ?>">
+                    <input type="hidden" name="product_service_charge" value="0">
+                    <input type="hidden" name="product_delivery_charge" value="0">
+                    <input type="hidden" name="success_url" value="<?php echo ESEWA_SUCCESS_URL; ?>">
+                    <input type="hidden" name="failure_url" value="<?php echo ESEWA_FAILURE_URL; ?>">
+                    <input type="hidden" name="signed_field_names" value="total_amount,transaction_uuid,product_code">
+                    <input type="hidden" name="signature" value="<?php echo generateEsewaSignature($_SESSION['esewa_payment']['total_amount'], $_SESSION['esewa_payment']['transaction_uuid'], $_SESSION['esewa_payment']['product_code']); ?>">
+                    
+                    <input type="submit" value="Pay with eSewa" style="background-color: #60bb46; color: white; border: none; padding: 15px 30px; border-radius: 5px; cursor: pointer; font-size: 18px; font-weight: bold;">
+                </form>
+                
+                <p style="margin-top: 15px; font-size: 12px; color: #666;">
+                    <strong>Test Credentials:</strong><br>
+                    eSewa ID: 9806800001<br>
+                    Password: Nepal@123<br>
+                    Token: 123456
+                </p>
+            </div>
+        <?php else: ?>
+            <!-- Show Order Details Form -->
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($fullName); ?>" required>
@@ -145,8 +201,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <label for="phone">Phone:</label>
     <input type="tel" id="phone" name="phone" pattern="^9[78][0-9]{8}$" required>
     
-    <input type="submit" value="Confirm Order">
+    <input type="submit" value="Proceed to Payment">
 </form>
+        <?php endif; ?>
 
     </div>
     <?php include 'footer.php'; ?>

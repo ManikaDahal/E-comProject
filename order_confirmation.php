@@ -67,6 +67,8 @@ if (!$conn) {
         <?php
         if (isset($_GET['email'])) {
             $email = $_GET['email'];
+            $paymentSuccess = isset($_GET['payment']) && $_GET['payment'] === 'success';
+            $transactionCode = isset($_GET['txn']) ? $_GET['txn'] : '';
 
             // Get today's date
             $currentDate = date('Y-m-d');
@@ -76,6 +78,17 @@ if (!$conn) {
             $result = mysqli_query($conn, $sql);
 
             if (mysqli_num_rows($result) > 0) {
+                // Show payment success message if applicable
+                if ($paymentSuccess) {
+                    echo "<div style='background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px;'>";
+                    echo "<h3 style='margin-top: 0;'>✓ Payment Successful!</h3>";
+                    echo "<p>Your payment has been successfully processed through eSewa.</p>";
+                    if ($transactionCode) {
+                        echo "<p><strong>Transaction Code:</strong> " . htmlspecialchars($transactionCode) . "</p>";
+                    }
+                    echo "</div>";
+                }
+                
                 echo "<table>";
                 echo "<thead><tr><th>Item Name</th><th>Price</th><th>Quantity</th><th>Order Time</th></tr></thead>";
                 echo "<tbody>";
