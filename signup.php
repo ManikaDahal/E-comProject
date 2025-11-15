@@ -33,6 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $conn->prepare("INSERT INTO signup (Fullname, Emailid, Password , Role) VALUES (?, ?, ?,  ?)");
             $stmt->bind_param("ssss", $fullname, $email, $pass, $role);
             if ($stmt->execute()) {
+                // Set session for newly signed-up user
+    $_SESSION['loggedin'] = true;
+    $_SESSION['username'] = $fullname;
+    $_SESSION['Emailid'] = $email;
                 echo "<script>
                         alert('Signup successful!');
                         window.location.href='index.php';
